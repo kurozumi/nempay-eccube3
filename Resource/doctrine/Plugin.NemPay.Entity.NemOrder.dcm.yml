@@ -1,0 +1,42 @@
+Plugin\NemPay\Entity\NemOrder:
+    type: entity
+    table: plg_nempay_order
+    repositoryClass: Plugin\NemPay\Repository\NemOrderRepository
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            id: true
+            column: nem_order_id
+            generator:
+                strategy: AUTO
+    fields:
+        rate:
+            type: float
+            nullable: false
+        payment_amount:
+            type: float
+            nullable: false
+        confirm_amount:
+            type: float
+            nullable: false
+        payment_info:
+            type: text
+            nullable: true
+
+    manyToOne:
+        Order:
+            targetEntity: Eccube\Entity\Order
+            joinColumn:
+                name: order_id
+                referencedColumnName: order_id
+
+    oneToMany:
+        NemHistoryes:
+            targetEntity: Plugin\NemPay\Entity\NemHistory
+            mappedBy: NemOrder
+            orderBy:
+                id: ASC
+            cascade: ["persist"]
+    lifecycleCallbacks: {  }

@@ -1,0 +1,12 @@
+name: NemPay
+code: NemPay
+version: 0.1.0
+service:
+    - NemPayServiceProvider
+event: NemPay
+orm.path:
+    - /Resource/doctrine
+    - /Resource/doctrine/master
+const:
+    PLUGIN_CODE: NemPay
+    TICKER_URL: https://api.zaif.jp/api/1/ticker/xem_jpy

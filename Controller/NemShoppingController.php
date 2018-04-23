@@ -83,7 +83,7 @@ class NemShoppingController extends AbstractController
         $NemOrder->setPaymentAmount($payment_amount);
         $this->app['orm.em']->flush();
                 
-        return $this->app['view']->render('NemPay/Twig/shopping/nempay.twig', array(
+        return $this->app['view']->render('NemPay/Twig/Shopping/nempay.twig', array(
             'form' => $form->createView(),
             'title' => 'NemPay決済',
             'order_id' => $Order->getId(),

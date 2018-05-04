@@ -1,6 +1,6 @@
 <?php
 
-namespace Plugin\NemPay\Repository;
+namespace Plugin\SimpleNemPay\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
@@ -13,7 +13,7 @@ class NemOrderRepository extends EntityRepository
         $this->app = $app;
     }
     
-    public function getOrderPayWaitForNemPay()
+    public function getOrderPayWaitForSimpleNemPay()
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         
@@ -22,7 +22,7 @@ class NemOrderRepository extends EntityRepository
         
         $qb
             ->select('no')
-            ->from('\Plugin\NemPay\Entity\NemOrder', 'no')
+            ->from('\Plugin\SimpleNemPay\Entity\NemOrder', 'no')
             ->innerJoin('\Eccube\Entity\Order', 'o', 'WITH', 'o = no.Order')
             ->andWhere('o.OrderStatus = :OrderStatus')
             ->setParameter('OrderStatus', $OrderStatus); 

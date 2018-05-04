@@ -1,4 +1,4 @@
-# nempay-eccube3
+# simple_nempay-eccube3
 
 ## Overview
 EC-CUBE 3 series Nem (Xem) payment plug-in.
@@ -11,13 +11,13 @@ By installing this plug-in you can settle in Xem.
 ## Install
 1. Create plug-in file
 ```bash
-$ git clone git@github.com:maroemon58/nempay-eccube3.git
-$ cd nempay-eccube3
-$ tar -zcvf NemPay.tar.gz *
+$ git clone git@github.com:maroemon58/simple_nempay-eccube3.git
+$ cd simple_nempay-eccube3
+$ tar -zcvf SimpleNemPay.tar.gz *
 ```
 
 2. Install on EC-CUBE
-Install the created plug-in(NemPay.tar.gz) from "owner's store > plugin > plugin list"
+Install the created plug-in(SimpleNemPay.tar.gz) from "owner's store > plugin > plugin list"
 
 3. Plug-in setting
 Register an auctioneer account (deposit destination)
@@ -25,21 +25,21 @@ Register an auctioneer account (deposit destination)
 
 4. Payment confirmation setting
 Set up confirmation program to activate payment every fixed time
-Program：〜/NemPay/Command/PaymentConfirmBatchCommand.php
+Program：〜/SimpleNemPay/Command/PaymentConfirmBatchCommand.php
 ```bash
 # 1.change console.
 $ cd /var/www/html/eccube3/
 $ vim app/console
 # add below.
-$console->add(new Plugin\NemPay\Command\PaymentConfirmBatchCommand(new Eccube\Application()));
+$console->add(new Plugin\SimpleNemPay\Command\PaymentConfirmBatchCommand(new Eccube\Application()));
 # 2.set crontab
 $ crontab -e
-*/5 * * * * /usr/bin/php /var/www/html/eccube-3.0.15/app/console nempay:payment_confirm
+*/5 * * * * /usr/bin/php /var/www/html/eccube-3.0.15/app/console simple_nempay:payment_confirm
 ```
   
 ## Licence
 
-[GNU](https://github.com/maroemon58/nempay-eccube3/blob/master/LICENSE)
+[GNU](https://github.com/maroemon58/simple_nempay-eccube3/blob/master/LICENSE)
 
 ## Author
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Plugin\NemPay\Repository;
+namespace Plugin\SimpleNemPay\Repository;
 
 use Doctrine\ORM\EntityRepository;
 

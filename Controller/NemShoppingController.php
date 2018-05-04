@@ -1,6 +1,6 @@
 <?php
 
-namespace Plugin\NemPay\Controller;
+namespace Plugin\SimpleNemPay\Controller;
 
 use Eccube\Application;
 use Eccube\Controller\AbstractController;
@@ -30,7 +30,7 @@ class NemShoppingController extends AbstractController
 
         $Order = $this->app['eccube.repository.order']->findOneBy(array('pre_order_id' => $this->app['eccube.service.cart']->getPreOrderId()));
         if (empty($Order)) {
-            $this->app['monolog.nempay']->addInfo('pay process error. not found Order in index.');
+            $this->app['monolog.simple_nempay']->addInfo('pay process error. not found Order in index.');
             $error_title = 'システムエラーが発生しました。';
             $error_message = '注文情報の取得が出来ませんでした。この手続きは無効となりました。';
             return $this->app['view']->render('error.twig', compact('error_title', 'error_message'));
@@ -44,7 +44,7 @@ class NemShoppingController extends AbstractController
 
         $render_flg = true;
         $form = $this->app['form.factory']
-            ->createBuilder('nempay')
+            ->createBuilder('simple_nempay')
             ->getForm();
 
         // リクエストパラメータをセット
@@ -57,10 +57,10 @@ class NemShoppingController extends AbstractController
                 $this->app['eccube.service.cart']->clear()->save();
                 
                 // 受注メール送信
-                $this->app['eccube.plugin.nempay.service.nem_shopping']->sendOrderMail($Order);
+                $this->app['eccube.plugin.simple_nempay.service.nem_shopping']->sendOrderMail($Order);
                 
                 // 受注番号をセット
-                $this->app['session']->set('eccube.plugin.nempay.order_id', $Order->getId());
+                $this->app['session']->set('eccube.plugin.simple_nempay.order_id', $Order->getId());
                 
                 // 注文完了処理
                 return $this->app->redirect($this->app->url('shopping_complete'));
@@ -69,7 +69,7 @@ class NemShoppingController extends AbstractController
         
         $payment_total = $Order->getPaymentTotal();
         // レート取得
-        $rate = $this->app['eccube.plugin.nempay.service.nem_request']->getRate();
+        $rate = $this->app['eccube.plugin.simple_nempay.service.nem_request']->getRate();
         if (empty($rate)) {
             $error_title = '決済エラーが発生しました。';
             $error_message = '決済情報の取得に失敗しました。もう一度決済を試みてください。';
@@ -78,14 +78,14 @@ class NemShoppingController extends AbstractController
         
         $payment_amount = round($payment_total / $rate, 3);
 
-        $NemOrder = $this->app['eccube.plugin.nempay.service.nem_shopping']->getNemOrder($Order);
+        $NemOrder = $this->app['eccube.plugin.simple_nempay.service.nem_shopping']->getNemOrder($Order);
         $NemOrder->setRate($rate);
         $NemOrder->setPaymentAmount($payment_amount);
         $this->app['orm.em']->flush();
                 
-        return $this->app['view']->render('NemPay/Twig/Shopping/nempay.twig', array(
+        return $this->app['view']->render('SimpleNemPay/Twig/Shopping/simple_nempay.twig', array(
             'form' => $form->createView(),
-            'title' => 'NemPay決済',
+            'title' => 'かんたんNEM決済',
             'order_id' => $Order->getId(),
             'payment_total' => $payment_total,
             'payment_amount' => $payment_amount,
@@ -101,7 +101,7 @@ class NemShoppingController extends AbstractController
         $order_id = $this->app['request']->get('order_id');
         $Order = $this->app['eccube.repository.order']->find($order_id);
         if (empty($Order)) {
-            $this->app['monolog.nempay']->addInfo('pay process error. not found Order in index.');
+            $this->app['monolog.simple_nempay']->addInfo('pay process error. not found Order in index.');
             $error_title = 'システムエラーが発生しました。';
             $error_message = '注文情報の取得が出来ませんでした。この手続きは無効となりました。';
             return $this->app['view']->render('error.twig', compact('error_title', 'error_message'));
@@ -113,25 +113,25 @@ class NemShoppingController extends AbstractController
         $this->app['orm.em']->persist($Order);
         $this->app['orm.em']->flush();
 
-        $this->app['monolog.nempay']->addInfo('back. order_id = ' . $Order->getId());
+        $this->app['monolog.simple_nempay']->addInfo('back. order_id = ' . $Order->getId());
         return $this->app->redirect($this->app->url('shopping'));
     }
 
 
     public function changeOrderData($Order)
     {
-        $NemOrder = $this->app['eccube.plugin.nempay.service.nem_shopping']->getNemOrder($Order);
+        $NemOrder = $this->app['eccube.plugin.simple_nempay.service.nem_shopping']->getNemOrder($Order);
 
         // トランザクション制御
         $em = $this->app['orm.em'];
         $em->getConnection()->beginTransaction();
         
         // Nem決済情報追加
-        $msg = $this->app['eccube.plugin.nempay.service.nem_shopping']->getShortHash($Order);
-        $arrPaymentInfo = $this->app['eccube.plugin.nempay.service.nem_shopping']->getPaymentInfo($NemOrder, $msg);
+        $msg = $this->app['eccube.plugin.simple_nempay.service.nem_shopping']->getShortHash($Order);
+        $arrPaymentInfo = $this->app['eccube.plugin.simple_nempay.service.nem_shopping']->getPaymentInfo($NemOrder, $msg);
         $NemOrder->setPaymentInfo(serialize($arrPaymentInfo));
         // QRコード生成
-        $this->app['eccube.plugin.nempay.service.nem_shopping']->createQrcodeImage($Order, $NemOrder, $msg);
+        $this->app['eccube.plugin.simple_nempay.service.nem_shopping']->createQrcodeImage($Order, $NemOrder, $msg);
         
         // 受注情報更新
         $OrderStatus = $this->app['eccube.repository.order_status']->find($this->app['config']['order_pay_wait']);

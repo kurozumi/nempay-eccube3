@@ -1,6 +1,6 @@
 <?php
 
-namespace Plugin\NemPay\Form\Type\Admin;
+namespace Plugin\SimpleNemPay\Form\Type\Admin;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;

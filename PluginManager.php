@@ -1,6 +1,6 @@
 <?php
 
-namespace Plugin\NemPay;
+namespace Plugin\SimpleNemPay;
 
 use Eccube\Plugin\AbstractPluginManager;
 use Symfony\Component\Filesystem\Filesystem;

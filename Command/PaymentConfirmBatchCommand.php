@@ -1,9 +1,9 @@
 <?php
 
-namespace Plugin\NemPay\Command;
+namespace Plugin\SimpleNemPay\Command;
 
-use Plugin\NemPay\Entity\NemOrder;
-use Plugin\NemPay\Entity\NemHistory;
+use Plugin\SimpleNemPay\Entity\NemOrder;
+use Plugin\SimpleNemPay\Entity\NemHistory;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -13,9 +13,9 @@ use Symfony\Component\Console\Input\InputOption;
  * 入金確認実行コマンド
  *
  * app/consoleに要追記
- * $console->add(new Plugin\NemPay\Command\PaymentConfirmBatchCommand(new Eccube\Application()));
+ * $console->add(new Plugin\SimpleNemPay\Command\PaymentConfirmBatchCommand(new Eccube\Application()));
  *
- * crontab  ex. 0 * * * * /usr/bin/php /var/www/html/eccube-3.0.15/app/console nempay:payment_confirm
+ * crontab  ex. 0 * * * * /usr/bin/php /var/www/html/eccube-3.0.15/app/console simple_nempay:payment_confirm
  */
 class PaymentConfirmBatchCommand extends \Knp\Command\Command
 {
@@ -30,7 +30,7 @@ class PaymentConfirmBatchCommand extends \Knp\Command\Command
 
     protected function configure()
     {
-        $this->setName('nempay:payment_confirm')
+        $this->setName('simple_nempay:payment_confirm')
              ->setDescription('入金確認バッチ処理');
     }
 
@@ -46,7 +46,7 @@ class PaymentConfirmBatchCommand extends \Knp\Command\Command
         ));
         
         // 対象の受注を取得
-        $arrNemOrder  = $this->app['eccube.plugin.nempay.repository.nem_order']->getOrderPayWaitForNemPay();
+        $arrNemOrder  = $this->app['eccube.plugin.simple_nempay.repository.nem_order']->getOrderPayWaitForSimpleNemPay();
         if (empty($arrNemOrder)) {
             return;
         }
@@ -54,13 +54,13 @@ class PaymentConfirmBatchCommand extends \Knp\Command\Command
         // キーを変換
         $arrNemOrderTemp = array();
         foreach ($arrNemOrder as $NemOrder) {
-            $shortHash = $this->app['eccube.plugin.nempay.service.nem_shopping']->getShortHash($NemOrder->getOrder());
+            $shortHash = $this->app['eccube.plugin.simple_nempay.service.nem_shopping']->getShortHash($NemOrder->getOrder());
             $arrNemOrderTemp[$shortHash] = $NemOrder;
         }
         $arrNemOrder = $arrNemOrderTemp;
         
         // NEM受信トランザクション取得
-        $arrData = $this->app['eccube.plugin.nempay.service.nem_request']->getIncommingTransaction();
+        $arrData = $this->app['eccube.plugin.simple_nempay.service.nem_request']->getIncommingTransaction();
 		foreach ($arrData as $data) {
             $msg = pack("H*", $data['transaction']['message']['payload']);
             
@@ -81,7 +81,7 @@ class PaymentConfirmBatchCommand extends \Knp\Command\Command
                     }
                     
                     if ($exist_flg) {
-						$this->app['monolog.nempay']->addInfo("batch error: processed transaction. transaction_id = " . $transaction_id);
+						$this->app['monolog.simple_nempay']->addInfo("batch error: processed transaction. transaction_id = " . $transaction_id);
                         continue;
                     }       
                 }
@@ -103,7 +103,7 @@ class PaymentConfirmBatchCommand extends \Knp\Command\Command
                 $NemHistory->setAmount($amount);
                 $NemHistory->setNemOrder($NemOrder);
 
-				$this->app['monolog.nempay']->addInfo("batch info: received. order_id = " . $Order->getId() . " amount = " . $amount);
+				$this->app['monolog.simple_nempay']->addInfo("batch info: received. order_id = " . $Order->getId() . " amount = " . $amount);
 
                 if ($payment_amount <= $confirm_amount) {
                     $OrderStatus = $this->app['eccube.repository.order_status']->find($this->app['config']['order_pre_end']);
@@ -111,7 +111,7 @@ class PaymentConfirmBatchCommand extends \Knp\Command\Command
                     $Order->setPaymentDate(new \DateTime());
 					
 					$this->sendPayEndMail($Order);
-					$this->app['monolog.nempay']->addInfo("batch info: pay end. order_id = " . $Order->getId());
+					$this->app['monolog.simple_nempay']->addInfo("batch info: pay end. order_id = " . $Order->getId());
                 }
                 
                 // 更新

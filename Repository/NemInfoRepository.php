@@ -1,6 +1,6 @@
 <?php
 
-namespace Plugin\NemPay\Repository;
+namespace Plugin\SimpleNemPay\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
@@ -20,7 +20,7 @@ class NemInfoRepository extends EntityRepository
         return unserialize($NemInfo->getSettingData());
     }
 
-    public function getNemPay()
+    public function getSimpleNemPay()
     {
         return $this->find(1)->getPayment();
     }

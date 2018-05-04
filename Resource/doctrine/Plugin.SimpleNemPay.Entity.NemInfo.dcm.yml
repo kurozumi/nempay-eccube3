@@ -1,7 +1,7 @@
-Plugin\NemPay\Entity\NemInfo:
+Plugin\SimpleNemPay\Entity\NemInfo:
     type: entity
-    table: plg_nempay_info
-    repositoryClass: Plugin\NemPay\Repository\NemInfoRepository
+    table: plg_simple_nempay_info
+    repositoryClass: Plugin\SimpleNemPay\Repository\NemInfoRepository
     id:
         id:
             type: integer

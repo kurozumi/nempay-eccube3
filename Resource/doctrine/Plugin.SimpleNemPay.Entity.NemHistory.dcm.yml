@@ -1,7 +1,7 @@
-Plugin\NemPay\Entity\NemHistory:
+Plugin\SimpleNemPay\Entity\NemHistory:
     type: entity
-    table: plg_nempay_history
-    repositoryClass: Plugin\NemPay\Repository\NemHistoryRepository
+    table: plg_simple_nempay_history
+    repositoryClass: Plugin\SimpleNemPay\Repository\NemHistoryRepository
     id:
         id:
             type: integer
@@ -21,7 +21,7 @@ Plugin\NemPay\Entity\NemHistory:
 
     manyToOne:
         NemOrder:
-            targetEntity: Plugin\NemPay\Entity\NemOrder
+            targetEntity: Plugin\SimpleNemPay\Entity\NemOrder
             inversedBy: NemHistoryes
             joinColumn:
                 name: nem_order_id

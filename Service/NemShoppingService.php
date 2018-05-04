@@ -1,8 +1,8 @@
 <?php
 
-namespace Plugin\NemPay\Service;
+namespace Plugin\SimpleNemPay\Service;
 
-use Plugin\NemPay\Entity\NemOrder;
+use Plugin\SimpleNemPay\Entity\NemOrder;
 use Eccube\Application;
 use Eccube\Entity\MailHistory;
 use Eccube\Entity\Order;
@@ -21,8 +21,8 @@ class NemShoppingService
     {
         $this->app = $app;
 
-        // NemPay設定値読み込み
-        $this->nemSettings = $app['eccube.plugin.nempay.repository.nem_info']->getNemSettings();
+        // かんたんNEM決済値読み込み
+        $this->nemSettings = $app['eccube.plugin.simple_nempay.repository.nem_info']->getNemSettings();
     }
 
     /**
@@ -34,7 +34,7 @@ class NemShoppingService
     public function sendOrderMail(Order $Order)
     {
         // メール送信
-        $message = $this->app['eccube.plugin.nempay.service.nem_mail']->sendOrderMail($Order);
+        $message = $this->app['eccube.plugin.simple_nempay.service.nem_mail']->sendOrderMail($Order);
 
         // 送信履歴を保存.
         $MailTemplate = $this->app['eccube.repository.mail_template']->find(1);
@@ -61,7 +61,7 @@ class NemShoppingService
      */
     public function getNemOrder(Order $Order)
     {
-        $NemOrder = $this->app['eccube.plugin.nempay.repository.nem_order']->findOneBy(array('Order' => $Order));
+        $NemOrder = $this->app['eccube.plugin.simple_nempay.repository.nem_order']->findOneBy(array('Order' => $Order));
         
         if (empty($NemOrder)) {
             // Nem受注情報を登録
@@ -79,7 +79,7 @@ class NemShoppingService
         $amount = $NemOrder->getPaymentAmount();
         
         $arrData = array();
-        $arrData['title']['name'] = 'NEM決済についてのご連絡';
+        $arrData['title']['name'] = 'かんたんNEM決済についてのご連絡';
         $arrData['title']['value'] = true;
         $arrData['qr_explain_title']['value'] = '【お支払いについてのご説明】';
         $arrData['qr_explain']['value'] = <<< __EOS__

@@ -1,6 +1,6 @@
 <?php
 
-namespace Plugin\NemPay\Entity;
+namespace Plugin\SimpleNemPay\Entity;
 
 class NemOrder extends \Eccube\Entity\AbstractEntity
 {
@@ -181,10 +181,10 @@ class NemOrder extends \Eccube\Entity\AbstractEntity
     /**
      * Add NemHistoryes
      *
-     * @param  \Plugin\NemPay\Entity\NemHistory $NemHistory
+     * @param  \Plugin\SimpleNemPay\Entity\NemHistory $NemHistory
      * @return Order
      */
-    public function addNemHistory(\Plugin\NemPay\Entity\NemHistory $NemHistory)
+    public function addNemHistory(\Plugin\SimpleNemPay\Entity\NemHistory $NemHistory)
     {
         $this->NemHistoryes[] = $NemHistory;
 

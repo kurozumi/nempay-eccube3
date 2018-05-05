@@ -62,7 +62,13 @@ class PaymentConfirmBatchCommand extends \Knp\Command\Command
         // NEM受信トランザクション取得
         $arrData = $this->app['eccube.plugin.simple_nempay.service.nem_request']->getIncommingTransaction();
 		foreach ($arrData as $data) {
-            $msg = pack("H*", $data['transaction']['message']['payload']);
+            if (isset($data['transaction']['otherTrans'])) {
+                $trans = $data['transaction']['otherTrans'];
+            } else {
+                $trans = $data['transaction'];
+            }
+            
+            $msg = pack("H*", $trans['message']['payload']);
             
             // 対象受注
             if (isset($arrNemOrder[$msg])) {
@@ -90,7 +96,7 @@ class PaymentConfirmBatchCommand extends \Knp\Command\Command
                 $em = $this->app['orm.em'];
                 $em->getConnection()->beginTransaction();
                                 
-                $amount = $data['transaction']['amount'] / 1000000;
+                $amount = $trans['amount'] / 1000000;
                 $payment_amount = $NemOrder->getPaymentAmount();
                 $confirm_amount = $NemOrder->getConfirmAmount();
                 

@@ -147,7 +147,7 @@ class SimpleNemPay
             $snippet = PHP_EOL;
             $snippet .= PHP_EOL;
             $snippet .= '***********************************************'.PHP_EOL;
-            $snippet .= '　かんたんNEM決済情報                                  '.PHP_EOL;
+            $snippet .= '　かんたんNEM決済情報                          '.PHP_EOL;
             $snippet .= '***********************************************'.PHP_EOL;
             foreach ($arrPaymentInfo as $key => $item) {
                 if ($key != 'title') {

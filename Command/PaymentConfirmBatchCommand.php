@@ -68,6 +68,11 @@ class PaymentConfirmBatchCommand extends \Knp\Command\Command
                 $trans = $data['transaction'];
             }
             
+            // メッセージが空の場合はスキップ
+            if (empty($trans['message']['payload'])) {
+                continue;
+            }
+            
             $msg = pack("H*", $trans['message']['payload']);
             
             // 対象受注

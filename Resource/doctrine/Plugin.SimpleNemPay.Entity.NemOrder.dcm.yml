@@ -18,7 +18,7 @@ Plugin\SimpleNemPay\Entity\NemOrder:
         payment_amount:
             type: float
             nullable: false
-        confirm_amount:
+        remittance_amount:
             type: float
             nullable: false
         payment_info:

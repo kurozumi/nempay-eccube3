@@ -183,11 +183,11 @@ __EOS__;
                 $order_id = $Order->getId();
                 $amount = $trans['amount'] / 1000000;
                 $payment_amount = $NemOrder->getPaymentAmount();
-                $confirm_amount = $NemOrder->getConfirmAmount();
+                $remittance_amount = $NemOrder->getRemittanceAmount();
                 
-                $pre_amount = empty($confirm_amount) ? 0 : $confirm_amount;
-                $confirm_amount = $pre_amount + $amount;
-                $NemOrder->setConfirmAmount($confirm_amount);
+                $pre_amount = empty($remittance_amount) ? 0 : $remittance_amount;
+                $remittance_amount = $pre_amount + $amount;
+                $NemOrder->setRemittanceAmount($remittance_amount);
                 
                 $NemHistory = new NemHistory();
                 $NemHistory->setTransactionId($transaction_id);
@@ -196,7 +196,7 @@ __EOS__;
 
 				$this->app['monolog.simple_nempay']->addInfo("received. order_id = " . $order_id . " amount = " . $amount);
 
-                if ($payment_amount <= $confirm_amount) {
+                if ($payment_amount <= $remittance_amount) {
                     $OrderStatus = $this->app['eccube.repository.order_status']->find($this->app['config']['order_pre_end']);
                     $Order->setOrderStatus($OrderStatus);
                     $Order->setPaymentDate(new \DateTime());

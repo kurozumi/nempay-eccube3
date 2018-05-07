@@ -272,7 +272,7 @@
                                         <th id="result_list_main__header_name">お名前</th>
                                         <th id="result_list_main__header_payment_total">購入金額(円)</th>
                                         <th id="result_list_main__header_payment_amount">購入金額(XEM)</th>
-                                        <th id="result_list_main__header_confirm_amount">送金金額(XEM)</th>
+                                        <th id="result_list_main__header_remittance_amount">送金金額(XEM)</th>
                                         <th>&nbsp;</th>
                                     </tr>
                                 </thead>
@@ -281,7 +281,7 @@
                                 {% set Order = NemOrder.Order %}
                                     <tr id="result_list_main__item--{{ Order.id }}">
                                         <td id="result_list_main__id_check--{{ Order.id }}" class="text-center">
-                                            {% if NemOrder.confirm_amount < NemOrder.payment_amount %}
+                                            {% if NemOrder.remittance_amount < NemOrder.payment_amount %}
                                                 <input type="checkbox" id="check-{{ Order.id }}" data-id="{{ Order.id }}" name="ids{{ Order.id }}">
                                             {% endif %}
                                         </td>
@@ -290,7 +290,7 @@
                                         <td id="result_list_main__name--{{ Order.id }}">{{ Order.name01 }} {{ Order.name02 }}</td>
                                         <td id="result_list_main__payment_total--{{ Order.id }}" class="text-right">{{ Order.payment_total|number_format }}</td>
                                         <td id="result_list_main__payment_amount--{{ Order.id }}" class="text-right">{{ NemOrder.payment_amount|number_format(4) }}</td>
-                                        <td id="result_list_main__confirm_amount--{{ Order.id }}" class="text-right">{{ NemOrder.confirm_amount|number_format(4) }}</td>
+                                        <td id="result_list_main__remittance_amount--{{ Order.id }}" class="text-right">{{ NemOrder.remittance_amount|number_format(4) }}</td>
                                         <td id="result_list_main__order_status--{{ Order.id }}">{{ Order.OrderStatus }}</td>
                                     </tr>
                             {% endfor %}

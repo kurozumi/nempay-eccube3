@@ -21,6 +21,11 @@ class SimpleNemPayServiceProvider implements ServiceProviderInterface
         $app->match('/shopping/simple_nem_pay', '\Plugin\SimpleNemPay\Controller\NemShoppingController::index')->bind('shopping_nem_pay');
         $app->match('/shopping/simple_nem_pay/back', '\Plugin\SimpleNemPay\Controller\NemShoppingController::back')->bind('shopping_nem_pay_back');
 
+        // simple nempay order
+        $app->match('/' . $app["config"]["admin_route"] . '/simple_nempay_order', '\\Plugin\\SimpleNemPay\\Controller\\Admin\\Order\\NemOrderController::index')->bind('simple_nempay_order');
+        $app->match('/' . $app["config"]["admin_route"] . '/simple_nempay_order/page/{page_no}', '\\Plugin\\SimpleNemPay\\Controller\\Admin\\Order\\NemOrderController::index')->assert('page_no', '\d+')->bind('simple_nempay_order_page');
+        $app->match('/' . $app["config"]["admin_route"] . '/simple_nempay_order/check', '\\Plugin\\SimpleNemPay\\Controller\\Admin\\Order\\NemOrderController::check')->bind('simple_nempay_check');
+
         // Service
         $app['eccube.plugin.simple_nempay.service.nem_request'] = $app->share(function () use ($app) {
             return new \Plugin\SimpleNemPay\Service\NemRequestService($app);
@@ -53,6 +58,27 @@ class SimpleNemPayServiceProvider implements ServiceProviderInterface
         $app['form.types'] = $app->share($app->extend('form.types', function ($types) use ($app) {
             $types[] = new \Plugin\SimpleNemPay\Form\Type\SimpleNemPayType($app);
             return $types;
+        }));
+        
+        // sub navi
+        $app['config'] = $app->share($app->extend('config', function ($config) {
+            foreach ($config['nav'] as $key => $nav) {
+                if ($nav['id'] == 'order') {
+                    $orderNav = $nav;
+                    $orderNavKey = $key;
+                    break;
+                }
+            }
+
+            $orderNav['child'][] = array(
+                'id' => 'simple_nempay_order_master',
+                'name' => 'かんたんNEM決済受注マスター',
+                'url' => 'simple_nempay_order',
+            );
+
+            $config['nav'][$orderNavKey] = $orderNav;
+
+            return $config;
         }));
 
         // log file

@@ -105,7 +105,7 @@ class SimpleNemPay
                         $this->app['orm.em']->persist($Order);
                         $this->app['orm.em']->flush();
 
-                        $url = $this->app->url('shopping_nem_pay');
+                        $url = $this->app->url('shopping_simple_nempay');
 
                         if ($event instanceof \Symfony\Component\HttpKernel\Event\KernelEvent) {
                             $response = $this->app->redirect($url);

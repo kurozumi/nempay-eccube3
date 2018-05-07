@@ -18,8 +18,8 @@ class SimpleNemPayServiceProvider implements ServiceProviderInterface
         $app->match('/' . $app["config"]["admin_route"] . '/plugin/SimpleNemPay/config', '\\Plugin\\SimpleNemPay\\Controller\\Admin\\ConfigController::index')->bind('plugin_SimpleNemPay_config');
 
         // shopping
-        $app->match('/shopping/simple_nem_pay', '\Plugin\SimpleNemPay\Controller\NemShoppingController::index')->bind('shopping_nem_pay');
-        $app->match('/shopping/simple_nem_pay/back', '\Plugin\SimpleNemPay\Controller\NemShoppingController::back')->bind('shopping_nem_pay_back');
+        $app->match('/shopping/simple_nempay', '\Plugin\SimpleNemPay\Controller\NemShoppingController::index')->bind('shopping_simple_nempay');
+        $app->match('/shopping/simple_nempay/back', '\Plugin\SimpleNemPay\Controller\NemShoppingController::back')->bind('shopping_simple_nempay_back');
 
         // simple nempay order
         $app->match('/' . $app["config"]["admin_route"] . '/simple_nempay_order', '\\Plugin\\SimpleNemPay\\Controller\\Admin\\Order\\NemOrderController::index')->bind('simple_nempay_order');

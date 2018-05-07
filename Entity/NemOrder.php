@@ -28,7 +28,7 @@ class NemOrder extends \Eccube\Entity\AbstractEntity
     /**
      * @var float
      */
-    private $confirm_amount;
+    private $remittance_amount;
     
     /**
      * @var float
@@ -133,14 +133,14 @@ class NemOrder extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Set confirm_amount
+     * Set remittance_amount
      *
-     * @param  float $confirmAmount
+     * @param  float $remittanceAmount
      * @return NemOrder
      */
-    public function setConfirmAmount($confirmAmount)
+    public function setRemittanceAmount($remittanceAmount)
     {
-        $this->confirm_amount = $confirmAmount;
+        $this->remittance_amount = $remittanceAmount;
 
         return $this;
     }
@@ -169,13 +169,13 @@ class NemOrder extends \Eccube\Entity\AbstractEntity
     }
 
     /**
-     * Get confirm_amount
+     * Get remittance_amount
      *
      * @return float
      */
-    public function getConfirmAmount()
+    public function getRemittanceAmount()
     {
-        return $this->confirm_amount;
+        return $this->remittance_amount;
     }
 
     /**

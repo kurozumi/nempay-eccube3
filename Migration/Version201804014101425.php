@@ -143,7 +143,7 @@ class Version201804014101425 extends AbstractMigration
         $table->addColumn('payment_amount', 'float', array(
             'notnull' => false,
         ));
-        $table->addColumn('confirm_amount', 'float', array(
+        $table->addColumn('remittance_amount', 'float', array(
             'notnull' => false,
         ));
         $table->addColumn('payment_info', 'text', array(

@@ -201,7 +201,7 @@ __EOS__;
                     $Order->setOrderStatus($OrderStatus);
                     $Order->setPaymentDate(new \DateTime());
 					
-					$this->sendPayEndMail($Order);
+					$this->sendPayEndMail($NemOrder);
 					$this->app['monolog.simple_nempay']->addInfo("pay end. order_id = " . $order_id);
                 }
                 
@@ -218,22 +218,19 @@ __EOS__;
         return $arrUpdateOrderId;
     }
     
-    public function sendPayEndMail($Order)
+    public function sendPayEndMail($NemOrder)
     {
         $BaseInfo = $this->app['eccube.repository.base_info']->get();
-        $name01 = $Order->getName01();
-        $name02 = $Order->getName02();
         
-        $body = <<<__EOS__
-{$name01} {$name02} 様
-
-NEM決済の入金を確認致しました。
-__EOS__;
+        $body = $this->app->renderView('SimpleNemPay/Twig/Mail/remittance_confirm.twig', array(
+            'NemOrder' => $NemOrder,
+        ));
 
         $message = \Swift_Message::newInstance()
-            ->setSubject('【' . $BaseInfo->getShopName() . '】入金確認通知')
+            ->setSubject('【' . $BaseInfo->getShopName() . '】かんたんNEM決済 送金確認通知')
             ->setFrom(array($BaseInfo->getEmail03() => $BaseInfo->getShopName()))
-            ->setTo(array($Order->getEmail()))
+            ->setTo(array($NemOrder->getOrder()->getEmail()))
+            ->setBcc(array($BaseInfo->getEmail03() => $BaseInfo->getShopName()))
             ->setBody($body);
         $this->app->mail($message);
 

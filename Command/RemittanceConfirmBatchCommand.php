@@ -13,11 +13,11 @@ use Symfony\Component\Console\Input\InputOption;
  * 入金確認実行コマンド
  *
  * app/consoleに要追記
- * $console->add(new Plugin\SimpleNemPay\Command\PaymentConfirmBatchCommand(new Eccube\Application()));
+ * $console->add(new Plugin\SimpleNemPay\Command\RemittanceConfirmBatchCommand(new Eccube\Application()));
  *
- * crontab  ex. 0 * * * * /usr/bin/php /var/www/html/eccube-3.0.15/app/console simple_nempay:payment_confirm
+ * crontab  ex. 0 * * * * /usr/bin/php /var/www/html/eccube-3.0.15/app/console simple_nempay:remittance_confirm
  */
-class PaymentConfirmBatchCommand extends \Knp\Command\Command
+class RemittanceConfirmBatchCommand extends \Knp\Command\Command
 {
 
     private $app;
@@ -30,7 +30,7 @@ class PaymentConfirmBatchCommand extends \Knp\Command\Command
 
     protected function configure()
     {
-        $this->setName('simple_nempay:payment_confirm')
+        $this->setName('simple_nempay:remittance_confirm')
              ->setDescription('入金確認バッチ処理');
     }
 

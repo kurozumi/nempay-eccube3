@@ -25,16 +25,16 @@ Register an auctioneer account (deposit destination)
 
 4. Payment confirmation setting
 Set up confirmation program to activate payment every fixed time
-Program：〜/SimpleNemPay/Command/PaymentConfirmBatchCommand.php
+Program：〜/SimpleNemPay/Command/RemittanceConfirmBatchCommand.php
 ```bash
 # 1.change console.
 $ cd /var/www/html/eccube3/
 $ vim app/console
 # add below.
-$console->add(new Plugin\SimpleNemPay\Command\PaymentConfirmBatchCommand(new Eccube\Application()));
+$console->add(new Plugin\SimpleNemPay\Command\RemittanceConfirmBatchCommand(new Eccube\Application()));
 # 2.set crontab
 $ crontab -e
-*/5 * * * * /usr/bin/php /var/www/html/eccube-3.0.15/app/console simple_nempay:payment_confirm
+*/5 * * * * /usr/bin/php /var/www/html/eccube-3.0.15/app/console simple_nempay:remittance_confirm
 ```
   
 ## Licence

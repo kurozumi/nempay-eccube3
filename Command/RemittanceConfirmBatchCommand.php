@@ -31,7 +31,7 @@ class RemittanceConfirmBatchCommand extends \Knp\Command\Command
     protected function configure()
     {
         $this->setName('simple_nempay:remittance_confirm')
-             ->setDescription('入金確認バッチ処理');
+             ->setDescription('送金確認バッチ処理');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

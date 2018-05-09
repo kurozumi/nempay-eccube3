@@ -1,6 +1,6 @@
 <?php
 
-namespace Plugin\NemPay\Service;
+namespace Plugin\SimpleNemPay\Service;
 
 use Eccube\Application;
 
@@ -15,8 +15,8 @@ class NemRequestService
     {
         $this->app = $app;
 
-        // NemPay設定値読み込み
-        $this->nemSetting = $app['eccube.plugin.nempay.repository.nem_info']->getNemSettings();
+        // かんたんNEM決済値読み込み
+        $this->nemSetting = $app['eccube.plugin.simple_nempay.repository.nem_info']->getNemSettings();
     }
     
     function getIncommingTransaction() {
@@ -49,12 +49,12 @@ class NemRequestService
         $error = curl_error($c);
         curl_close($c);
         if (!$r || $errno) {
-            $this->app['monolog.nempay']->addInfo("nis error: unexpected response. url：". $url." parameter：".var_export($parameters, true));
+            $this->app['monolog.simple_nempay']->addInfo("nis error: unexpected response. url：". $url." parameter：".var_export($parameters, true));
             return false;
         }
 
         if ($info['http_code'] != 200) {
-            $this->app['monolog.nempay']->addInfo("nis error: unexpected response. url：". $url." parameter：".var_export($parameters, true));
+            $this->app['monolog.simple_nempay']->addInfo("nis error: unexpected response. url：". $url." parameter：".var_export($parameters, true));
             return false;
         }
 

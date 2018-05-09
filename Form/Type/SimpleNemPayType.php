@@ -1,12 +1,12 @@
 <?php
 
-namespace Plugin\NemPay\Form\Type;
+namespace Plugin\SimpleNemPay\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class NemPayType extends AbstractType {
+class SimpleNemPayType extends AbstractType {
     private $app;
 
     public function __construct(\Eccube\Application $app) {
@@ -30,7 +30,7 @@ class NemPayType extends AbstractType {
      * {@inheritdoc}
      */
     public function getName() {
-        return 'nempay';
+        return 'simple_nempay';
     }
 
 }

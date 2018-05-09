@@ -16,9 +16,9 @@ class Version201804014101425 extends AbstractMigration
     public function up(Schema $schema)
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->createPlgNemPayInfo($schema);
-        $this->createPlgNemPayOrder($schema);
-        $this->createPlgNemPayHistory($schema);
+        $this->createPlgSimpleNemPayInfo($schema);
+        $this->createPlgSimpleNemPayOrder($schema);
+        $this->createPlgSimpleNemPayHistory($schema);
     }
 
     /**
@@ -33,9 +33,9 @@ class Version201804014101425 extends AbstractMigration
 
         $this->deleteFromDtbPayment();
         // this down() migration is auto-generated, please modify it to your needs
-        $schema->dropTable('plg_nempay_info');
-        $schema->dropTable('plg_nempay_order');
-        $schema->dropTable('plg_nempay_history');
+        $schema->dropTable('plg_simple_nempay_info');
+        $schema->dropTable('plg_simple_nempay_order');
+        $schema->dropTable('plg_simple_nempay_history');
     }
 
     public function postUp(Schema $schema)
@@ -55,38 +55,38 @@ class Version201804014101425 extends AbstractMigration
         $select = "SELECT max(rank)+1 FROM dtb_payment";
         $rank = $this->connection->fetchColumn($select);
 
-        // 支払い方法「NemPay」追加
+        // 支払い方法「かんたんNEM決済」追加
         $payment_id = '';
         if ($config['database']['driver'] == 'pdo_mysql') {
             $insert = "INSERT INTO dtb_payment(creator_id, payment_method, charge, rule_max, rank, create_date, update_date, rule_min)
-                        VALUES (1, 'NemPay', 0, null, $rank, '$datetime', '$datetime', null);";
+                        VALUES (1, 'かんたんNEM決済', 0, null, $rank, '$datetime', '$datetime', null);";
             $this->connection->executeUpdate($insert);
 
-            // NemPayのpayment_id取得
-            $select = "SELECT max(payment_id) FROM dtb_payment WHERE payment_method = 'NemPay'";
+            // 「かんたんNEM決済」のpayment_id取得
+            $select = "SELECT max(payment_id) FROM dtb_payment WHERE payment_method = 'かんたんNEM決済'";
             $payment_id = $this->connection->fetchColumn($select);
         } else {
             $nextval = "SELECT nextval('dtb_payment_payment_id_seq')";
             $payment_id = $this->connection->fetchColumn($nextval);
             $insert = "INSERT INTO dtb_payment(payment_id, creator_id, payment_method, charge, rule_max, rank, create_date, update_date, rule_min)
-                        VALUES ($payment_id, 1, 'NemPay', 0, null, $rank, '$datetime', '$datetime', 0);";
+                        VALUES ($payment_id, 1, 'かんたんNEM決済', 0, null, $rank, '$datetime', '$datetime', 0);";
             $this->connection->executeUpdate($insert);
         }
 
         // プラグイン情報初期セット
-        $insert = "INSERT INTO plg_nempay_info(id, code, name, payment_id, create_date, update_date)
-                    VALUES (1, 'NemPay', 'NemPay', $payment_id, '$datetime', '$datetime');";
+        $insert = "INSERT INTO plg_simple_nempay_info(id, code, name, payment_id, create_date, update_date)
+                    VALUES (1, 'SimpleNemPay', 'SimpleNemPay', $payment_id, '$datetime', '$datetime');";
         $this->connection->executeUpdate($insert);
     }
 
     /**
-     * create table plg_nempay_info
+     * create table plg_simple_nempay_info
      *
      * @param Schema $schema
      */
-    public function createPlgNemPayInfo(Schema $schema)
+    public function createPlgSimpleNemPayInfo(Schema $schema)
     {
-        $table = $schema->createTable('plg_nempay_info');
+        $table = $schema->createTable('plg_simple_nempay_info');
 
         $table->addColumn('id', 'integer', array(
             'autoincrement' => true,
@@ -123,13 +123,13 @@ class Version201804014101425 extends AbstractMigration
     }
 
     /**
-     * create table plg_nempay_order
+     * create table plg_simple_nempay_order
      *
      * @param Schema $schema
      */
-    public function createPlgNemPayOrder(Schema $schema)
+    public function createPlgSimpleNemPayOrder(Schema $schema)
     {
-        $table = $schema->createTable('plg_nempay_order');
+        $table = $schema->createTable('plg_simple_nempay_order');
 
         $table->addColumn('nem_order_id', 'integer', array(
             'autoincrement' => true,
@@ -143,7 +143,7 @@ class Version201804014101425 extends AbstractMigration
         $table->addColumn('payment_amount', 'float', array(
             'notnull' => false,
         ));
-        $table->addColumn('confirm_amount', 'float', array(
+        $table->addColumn('remittance_amount', 'float', array(
             'notnull' => false,
         ));
         $table->addColumn('payment_info', 'text', array(
@@ -156,13 +156,13 @@ class Version201804014101425 extends AbstractMigration
     }
 
     /**
-     * create table plg_nempay_history
+     * create table plg_simple_nempay_history
      *
      * @param Schema $schema
      */
-    public function createPlgNemPayHistory(Schema $schema)
+    public function createPlgSimpleNemPayHistory(Schema $schema)
     {
-        $table = $schema->createTable('plg_nempay_history');
+        $table = $schema->createTable('plg_simple_nempay_history');
 
         $table->addColumn('nem_history_id', 'integer', array(
             'autoincrement' => true,
@@ -179,13 +179,13 @@ class Version201804014101425 extends AbstractMigration
 
         $table->setPrimaryKey(array('nem_history_id'));
 
-        $table->addForeignKeyConstraint('plg_nempay_order', array('nem_order_id'), array('nem_order_id'));
+        $table->addForeignKeyConstraint('plg_simple_nempay_order', array('nem_order_id'), array('nem_order_id'));
     }
 
     public function deleteFromDtbPayment()
     {
-        // NemPayのpayment_idを取得
-        $select = "SELECT payment_id FROM plg_nempay_info";
+        // 「かんたんNEM決済」のpayment_idを取得
+        $select = "SELECT payment_id FROM plg_simple_nempay_info";
         $payment_id = $this->connection->fetchColumn($select);
 
         $update = "UPDATE dtb_payment SET del_flg = 1 WHERE payment_id = $payment_id";
@@ -197,7 +197,7 @@ class Version201804014101425 extends AbstractMigration
     }
 
 
-    function getNemPayCode()
+    function getSimpleNemPayCode()
     {
         $config = \Eccube\Application::alias('config');
 

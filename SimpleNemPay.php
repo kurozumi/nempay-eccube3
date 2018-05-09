@@ -1,6 +1,6 @@
 <?php
 
-namespace Plugin\NemPay;
+namespace Plugin\SimpleNemPay;
 
 use Eccube\Entity\Order;
 use Eccube\Event\EventArgs;
@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
-class NemPay
+class SimpleNemPay
 {
     private $app;
 
@@ -29,8 +29,8 @@ class NemPay
 
             if (!is_null($Order)) {
                 $Payment = $Order->getPayment();
-                $NemPay = $this->app['eccube.plugin.nempay.repository.nem_info']->getNemPay();
-                if ($Payment == $NemPay) {
+                $SimpleNemPay = $this->app['eccube.plugin.simple_nempay.repository.nem_info']->getSimpleNemPay();
+                if ($Payment == $SimpleNemPay) {
                     // Get request
                     $request = $event->getRequest();
                     // Get response
@@ -49,7 +49,7 @@ class NemPay
         $nonMember = $this->app['session']->get('eccube.front.shopping.nonmember');
         if ($this->app->isGranted('ROLE_USER') || !is_null($nonMember)) {
             // Return if no order Id in session (normal payment method was selected)
-            $order_id = $this->app['session']->get('eccube.plugin.nempay.order_id');
+            $order_id = $this->app['session']->get('eccube.plugin.simple_nempay.order_id');
             if ($order_id == null) {
                 return;
             }
@@ -58,9 +58,9 @@ class NemPay
             $Order = $this->app['eccube.repository.order']->find($order_id);
             if (!is_null($Order)) {
                 $Payment = $Order->getPayment();
-                $NemPay = $this->app['eccube.plugin.nempay.repository.nem_info']->getNemPay();
+                $SimpleNemPay = $this->app['eccube.plugin.simple_nempay.repository.nem_info']->getSimpleNemPay();
 
-                if ($Payment == $NemPay) {
+                if ($Payment == $SimpleNemPay) {
                     // Get request
                     $request = $event->getRequest();
                     // Get response
@@ -74,7 +74,7 @@ class NemPay
             }
             
             // Remove orderId from session
-            $this->app['session']->set('eccube.plugin.nempay.order_id', null);
+            $this->app['session']->set('eccube.plugin.simple_nempay.order_id', null);
         }
     }
     
@@ -93,9 +93,9 @@ class NemPay
                 $form->handleRequest($this->app['request']);
                 if ($form->isValid()) {
                     $Payment = $Order->getPayment();
-                    $NemPay = $this->app['eccube.plugin.nempay.repository.nem_info']->getNemPay();
+                    $SimpleNemPay = $this->app['eccube.plugin.simple_nempay.repository.nem_info']->getSimpleNemPay();
 
-                    if ($Payment == $NemPay) {
+                    if ($Payment == $SimpleNemPay) {
                         $formData = $form->getData();
                         // 受注情報、配送情報を更新（決済処理中として更新する）
                         $this->app['eccube.service.order']->setOrderUpdate($this->app['orm.em'], $Order, $formData);
@@ -105,7 +105,7 @@ class NemPay
                         $this->app['orm.em']->persist($Order);
                         $this->app['orm.em']->flush();
 
-                        $url = $this->app->url('shopping_nem_pay');
+                        $url = $this->app->url('shopping_simple_nempay');
 
                         if ($event instanceof \Symfony\Component\HttpKernel\Event\KernelEvent) {
                             $response = $this->app->redirect($url);
@@ -125,7 +125,7 @@ class NemPay
     {
         if ($event->hasArgument('Order')) {
             $Order = $event->getArgument('Order');
-            $NemOrder = $this->app['eccube.plugin.nempay.repository.nem_order']->findOneBy(array('Order' => $Order,));
+            $NemOrder = $this->app['eccube.plugin.simple_nempay.repository.nem_order']->findOneBy(array('Order' => $Order,));
             if (is_null($NemOrder)) {
                 return;
             }
@@ -147,7 +147,7 @@ class NemPay
             $snippet = PHP_EOL;
             $snippet .= PHP_EOL;
             $snippet .= '***********************************************'.PHP_EOL;
-            $snippet .= '　Nem決済情報                                  '.PHP_EOL;
+            $snippet .= '　かんたんNEM決済情報                          '.PHP_EOL;
             $snippet .= '***********************************************'.PHP_EOL;
             foreach ($arrPaymentInfo as $key => $item) {
                 if ($key != 'title') {
@@ -177,7 +177,7 @@ class NemPay
     private function getHtmlShoppingConfirm(Request $request, Response $response){
         $crawler = new Crawler($response->getContent());
         $html = $this->getHtml($crawler);
-        $newMethod = 'Nem決済確認画面へ';
+        $newMethod = 'かんたんNEM決済確認画面へ';
         $oldMethod = $crawler->filter('#order-button')->html();
 
         $html = str_replace($oldMethod, $newMethod, $html);
@@ -194,14 +194,14 @@ class NemPay
         $crawler = new Crawler($response->getContent());
         $html = $this->getHtml($crawler);
         // Get info which need for extension template
-        $NemOrder = $this->app['eccube.plugin.nempay.repository.nem_order']->findOneBy(array('Order' => $Order));
+        $NemOrder = $this->app['eccube.plugin.simple_nempay.repository.nem_order']->findOneBy(array('Order' => $Order));
         $arrOther = unserialize($NemOrder->getPaymentInfo());
         
-        $filepath = $this->app['eccube.plugin.nempay.service.nem_shopping']->getQrcodeImagePath($Order);
+        $filepath = $this->app['eccube.plugin.simple_nempay.service.nem_shopping']->getQrcodeImagePath($Order);
         $arrOther['qr_code']['value'] = '<img src="data:image/png;base64,' . base64_encode(file_get_contents($filepath)) . '" alt="QR">';
 
         // Get and render extension template
-        $insert = $this->app->renderView('NemPay/Twig/Shopping/nempay_info.twig', array(
+        $insert = $this->app->renderView('SimpleNemPay/Twig/Shopping/simple_nempay_info.twig', array(
             'arrOther' => $arrOther,
         ));
         

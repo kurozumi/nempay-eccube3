@@ -1,6 +1,6 @@
 <?php
 
-namespace Plugin\NemPay\Service;
+namespace Plugin\SimpleNemPay\Service;
 
 use Eccube\Application;
 use Eccube\Event\EccubeEvents;
@@ -33,7 +33,7 @@ class NemMailService
         ));
         
         // QRコード
-        $filepath = $this->app['eccube.plugin.nempay.service.nem_shopping']->getQrcodeImagePath($Order);
+        $filepath = $this->app['eccube.plugin.simple_nempay.service.nem_shopping']->getQrcodeImagePath($Order);
         $attachment = \Swift_Attachment::fromPath($filepath)->setContentType('image/png');
         
         $message = \Swift_Message::newInstance()

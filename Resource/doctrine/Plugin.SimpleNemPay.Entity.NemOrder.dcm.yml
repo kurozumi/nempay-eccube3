@@ -1,7 +1,7 @@
-Plugin\NemPay\Entity\NemOrder:
+Plugin\SimpleNemPay\Entity\NemOrder:
     type: entity
-    table: plg_nempay_order
-    repositoryClass: Plugin\NemPay\Repository\NemOrderRepository
+    table: plg_simple_nempay_order
+    repositoryClass: Plugin\SimpleNemPay\Repository\NemOrderRepository
     id:
         id:
             type: integer
@@ -18,7 +18,7 @@ Plugin\NemPay\Entity\NemOrder:
         payment_amount:
             type: float
             nullable: false
-        confirm_amount:
+        remittance_amount:
             type: float
             nullable: false
         payment_info:
@@ -34,7 +34,7 @@ Plugin\NemPay\Entity\NemOrder:
 
     oneToMany:
         NemHistoryes:
-            targetEntity: Plugin\NemPay\Entity\NemHistory
+            targetEntity: Plugin\SimpleNemPay\Entity\NemHistory
             mappedBy: NemOrder
             orderBy:
                 id: ASC

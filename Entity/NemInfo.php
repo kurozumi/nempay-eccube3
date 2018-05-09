@@ -1,6 +1,6 @@
 <?php
 
-namespace Plugin\NemPay\Entity;
+namespace Plugin\SimpleNemPay\Entity;
 
 class NemInfo extends \Eccube\Entity\AbstractEntity
 {
